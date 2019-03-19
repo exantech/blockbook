@@ -816,6 +816,7 @@ func (w *Worker) getAddrDescUtxo(addrDesc bchain.AddressDescriptor, ba *db.AddrB
 									Txid:      bchainTx.Txid,
 									Vout:      int32(i),
 									AmountSat: (*Amount)(&vout.ValueSat),
+                                    ScriptPubKey: vout.ScriptPubKey.Hex,
 								})
 							}
 						}
@@ -873,6 +874,10 @@ func (w *Worker) getAddrDescUtxo(addrDesc bchain.AddressDescriptor, ba *db.AddrB
 					} else {
 						if !ta.Outputs[o.Vout].Spent {
 							v := ta.Outputs[o.Vout].ValueSat
+                            tx, err := w.GetTransaction(o.Txid, false, true)
+                            if err != nil {
+                                return nil, err
+                            }
 							// report only outpoints that are not spent in mempool
 							_, e := spentInMempool[o.Txid+strconv.Itoa(int(o.Vout))]
 							if !e {
@@ -882,6 +887,7 @@ func (w *Worker) getAddrDescUtxo(addrDesc bchain.AddressDescriptor, ba *db.AddrB
 									AmountSat:     (*Amount)(&v),
 									Height:        int(ta.Height),
 									Confirmations: bestheight - int(ta.Height) + 1,
+                                    ScriptPubKey:  tx.Vout[o.Vout].Hex,
 								})
 							}
 							checksum.Sub(&checksum, &v)
