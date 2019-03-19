@@ -442,7 +442,7 @@ func httpTests_BitcoinType(t *testing.T, ts *httptest.Server) {
 			status:      http.StatusOK,
 			contentType: "application/json; charset=utf-8",
 			body: []string{
-				`[{"txid":"7c3be24063f268aaa1ed81b64776798f56088757641a34fb156c4f51ed2e9d25","vout":1,"amount":"9172.83951061","satoshis":917283951061,"height":225494,"confirmations":1}]`,
+				`[{"txid":"7c3be24063f268aaa1ed81b64776798f56088757641a34fb156c4f51ed2e9d25","vout":1,"amount":"9172.83951061","satoshis":917283951061,"height":225494,"confirmations":1,"scriptPubKey":"76a9148d802c045445df49613f6a70ddd2e48526f3701f88ac"}]`,
 			},
 		},
 		{
@@ -451,7 +451,7 @@ func httpTests_BitcoinType(t *testing.T, ts *httptest.Server) {
 			status:      http.StatusOK,
 			contentType: "application/json; charset=utf-8",
 			body: []string{
-				`[{"txid":"7c3be24063f268aaa1ed81b64776798f56088757641a34fb156c4f51ed2e9d25","vout":1,"value":"917283951061","height":225494,"confirmations":1}]`,
+				`[{"txid":"7c3be24063f268aaa1ed81b64776798f56088757641a34fb156c4f51ed2e9d25","vout":1,"value":"917283951061","height":225494,"confirmations":1,"scriptPubKey":"76a9148d802c045445df49613f6a70ddd2e48526f3701f88ac"}]`,
 			},
 		},
 		{

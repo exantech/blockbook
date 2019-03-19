@@ -810,7 +810,21 @@ func (s *PublicServer) apiAddress(r *http.Request, apiVersion int) (interface{},
 		if ec != nil {
 			page = 0
 		}
-		address, err = s.api.GetAddress(r.URL.Path[i+1:], page, txsInAPI, api.TxidHistory, &api.AddressFilter{Vout: api.AddressFilterVoutOff})
+
+        extended := false
+        e := r.URL.Query().Get("txs")
+        if len(e) > 0 {
+            extended, err = strconv.ParseBool(e)
+            if err != nil {
+                return nil, api.NewAPIError("Parameter 'txs' cannot be converted to boolean", true)
+            }
+        }
+
+        if (extended) {
+            address, err = s.api.GetAddress(r.URL.Path[i+1:], page, txsInAPI, api.TxHistoryLight, &api.AddressFilter{Vout: api.AddressFilterVoutOff})
+        } else {
+            address, err = s.api.GetAddress(r.URL.Path[i+1:], page, txsInAPI, api.TxidHistory, &api.AddressFilter{Vout: api.AddressFilterVoutOff})
+        }
 		if err == nil && apiVersion == apiV1 {
 			return s.api.AddressToV1(address), nil
 		}

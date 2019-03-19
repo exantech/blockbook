@@ -228,6 +228,7 @@ type AddressUtxo struct {
 	AmountSat     *Amount `json:"value"`
 	Height        int     `json:"height,omitempty"`
 	Confirmations int     `json:"confirmations"`
+    ScriptPubKey  string  `json:"scriptPubKey"`
 }
 
 // Blocks is list of blocks with paging information
