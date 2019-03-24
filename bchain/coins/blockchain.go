@@ -232,9 +232,9 @@ func (c *blockChainWithMetrics) SendRawTransaction(tx string) (v string, err err
 	return c.b.SendRawTransaction(tx)
 }
 
-func (c *blockChainWithMetrics) ResyncMempool(onNewTxAddr bchain.OnNewTxAddrFunc) (count int, err error) {
+func (c *blockChainWithMetrics) ResyncMempool(onNewTxAddr bchain.OnNewTxAddrFunc, onNewTx bchain.OnNewTxFunc) (count int, err error) {
 	defer func(s time.Time) { c.observeRPCLatency("ResyncMempool", s, err) }(time.Now())
-	count, err = c.b.ResyncMempool(onNewTxAddr)
+	count, err = c.b.ResyncMempool(onNewTxAddr, onNewTx)
 	if err == nil {
 		c.m.MempoolSize.Set(float64(count))
 	}

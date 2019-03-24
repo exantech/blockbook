@@ -26,6 +26,7 @@ type MempoolBitcoinType struct {
 	chanTxid        chan string
 	chanAddrIndex   chan txidio
 	onNewTxAddr     OnNewTxAddrFunc
+    onNewTx         OnNewTxFunc
 }
 
 // NewMempoolBitcoinType creates new mempool handler.
@@ -111,6 +112,11 @@ func (m *MempoolBitcoinType) getTxAddrs(txid string, chanInput chan Outpoint, ch
 		return nil, false
 	}
 	glog.V(2).Info("mempool: gettxaddrs ", txid, ", ", len(tx.Vin), " inputs")
+
+	if m.onNewTx != nil {
+		m.onNewTx(tx)
+	}
+
 	io := make([]addrIndex, 0, len(tx.Vout)+len(tx.Vin))
 	for _, output := range tx.Vout {
 		addrDesc, err := m.chain.GetChainParser().GetAddrDescFromVout(&output)
@@ -159,10 +165,11 @@ func (m *MempoolBitcoinType) getTxAddrs(txid string, chanInput chan Outpoint, ch
 // Resync gets mempool transactions and maps outputs to transactions.
 // Resync is not reentrant, it should be called from a single thread.
 // Read operations (GetTransactions) are safe.
-func (m *MempoolBitcoinType) Resync(onNewTxAddr OnNewTxAddrFunc) (int, error) {
+func (m *MempoolBitcoinType) Resync(onNewTxAddr OnNewTxAddrFunc, onNewTx OnNewTxFunc) (int, error) {
 	start := time.Now()
 	glog.V(1).Info("mempool: resync")
 	m.onNewTxAddr = onNewTxAddr
+    m.onNewTx = onNewTx
 	txs, err := m.chain.GetMempool()
 	if err != nil {
 		return 0, err
@@ -207,6 +214,7 @@ func (m *MempoolBitcoinType) Resync(onNewTxAddr OnNewTxAddrFunc) (int, error) {
 	}
 	m.updateMappings(newTxToInputOutput, newAddrDescToTx)
 	m.onNewTxAddr = nil
+	m.onNewTx = nil
 	glog.Info("mempool: resync finished in ", time.Since(start), ", ", len(m.txToInputOutput), " transactions in mempool")
 	return len(m.txToInputOutput), nil
 }

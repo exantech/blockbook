@@ -59,7 +59,7 @@ func appendAddress(io []addrIndex, i int32, a string, parser BlockChainParser) [
 // Resync gets mempool transactions and maps outputs to transactions.
 // Resync is not reentrant, it should be called from a single thread.
 // Read operations (GetTransactions) are safe.
-func (m *MempoolEthereumType) Resync(onNewTxAddr OnNewTxAddrFunc) (int, error) {
+func (m *MempoolEthereumType) Resync(onNewTxAddr OnNewTxAddrFunc, onNewTx OnNewTxFunc) (int, error) {
 	start := time.Now()
 	glog.V(1).Info("Mempool: resync")
 	txs, err := m.chain.GetMempool()

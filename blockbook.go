@@ -89,6 +89,7 @@ var (
 	internalState              *common.InternalState
 	callbacksOnNewBlock        []bchain.OnNewBlockFunc
 	callbacksOnNewTxAddr       []bchain.OnNewTxAddrFunc
+	callbacksOnNewTx           []bchain.OnNewTxFunc
 	chanOsSignal               chan os.Signal
 	inShutdown                 int32
 )
@@ -286,6 +287,7 @@ func main() {
 		}()
 		callbacksOnNewBlock = append(callbacksOnNewBlock, publicServer.OnNewBlock)
 		callbacksOnNewTxAddr = append(callbacksOnNewTxAddr, publicServer.OnNewTxAddr)
+		callbacksOnNewTx = append(callbacksOnNewTx, publicServer.OnNewTx)
 	}
 
 	if *synchronize {
@@ -296,7 +298,7 @@ func main() {
 			return
 		}
 		var mempoolCount int
-		if mempoolCount, err = chain.ResyncMempool(nil); err != nil {
+		if mempoolCount, err = chain.ResyncMempool(nil, nil); err != nil {
 			glog.Error("resyncMempool ", err)
 			return
 		}
@@ -442,7 +444,7 @@ func syncMempoolLoop() {
 	// resync mempool about every minute if there are no chanSyncMempool requests, with debounce 1 second
 	tickAndDebounce(time.Duration(*resyncMempoolPeriodMs)*time.Millisecond, debounceResyncMempoolMs*time.Millisecond, chanSyncMempool, func() {
 		internalState.StartedMempoolSync()
-		if count, err := chain.ResyncMempool(onNewTxAddr); err != nil {
+		if count, err := chain.ResyncMempool(onNewTxAddr, onNewTx); err != nil {
 			glog.Error("syncMempoolLoop ", errors.ErrorStack(err))
 		} else {
 			internalState.FinishedMempoolSync(count)
@@ -498,6 +500,12 @@ func storeInternalStateLoop() {
 func onNewTxAddr(tx *bchain.Tx, desc bchain.AddressDescriptor) {
 	for _, c := range callbacksOnNewTxAddr {
 		c(tx, desc)
+	}
+}
+
+func onNewTx(tx *bchain.Tx) {
+	for _, c := range callbacksOnNewTx {
+		c(tx)
 	}
 }
 

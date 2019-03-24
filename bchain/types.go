@@ -191,6 +191,8 @@ type OnNewBlockFunc func(hash string, height uint32)
 // OnNewTxAddrFunc is used to send notification about a new transaction/address
 type OnNewTxAddrFunc func(tx *Tx, desc AddressDescriptor)
 
+type OnNewTxFunc func(tx *Tx)
+
 // BlockChain defines common interface to block chain daemon
 type BlockChain interface {
 	// life-cycle methods
@@ -217,7 +219,7 @@ type BlockChain interface {
 	EstimateFee(blocks int) (big.Int, error)
 	SendRawTransaction(tx string) (string, error)
 	// mempool
-	ResyncMempool(onNewTxAddr OnNewTxAddrFunc) (int, error)
+	ResyncMempool(onNewTxAddr OnNewTxAddrFunc, onNewTx OnNewTxFunc) (int, error)
 	GetMempoolTransactions(address string) ([]Outpoint, error)
 	GetMempoolTransactionsForAddrDesc(addrDesc AddressDescriptor) ([]Outpoint, error)
 	GetMempoolEntry(txid string) (*MempoolEntry, error)
