@@ -179,7 +179,7 @@ func (c *fakeBlockChain) SendRawTransaction(tx string) (v string, err error) {
 	return "", errors.New("Invalid data")
 }
 
-func (c *fakeBlockChain) ResyncMempool(onNewTxAddr bchain.OnNewTxAddrFunc) (count int, err error) {
+func (c *fakeBlockChain) ResyncMempool(onNewTxAddr bchain.OnNewTxAddrFunc, onNewTx bchain.OnNewTxFunc) (count int, err error) {
 	return 0, errors.New("Not implemented")
 }
 
