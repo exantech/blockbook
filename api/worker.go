@@ -883,14 +883,17 @@ func (w *Worker) getAddrDescUtxo(addrDesc bchain.AddressDescriptor, ba *db.AddrB
 				}
 				_, e := spentInMempool[txid+strconv.Itoa(int(utxo.Vout))]
 				if !e {
-					r = append(r, Utxo{
-						Txid:          txid,
-						Vout:          utxo.Vout,
-						AmountSat:     (*Amount)(&utxo.ValueSat),
-						Height:        int(utxo.Height),
-						Confirmations: bestheight - int(utxo.Height) + 1,
-						// TODO: add ScriptPubKey:  tx.Vout[o.Vout].Hex,
-					})
+					tx, err := w.GetTransaction(txid, false, true)
+					if err == nil {
+						r = append(r, Utxo{
+							Txid:		   txid,
+							Vout:		   utxo.Vout,
+							AmountSat:	   (*Amount)(&utxo.ValueSat),
+							Height:		   int(utxo.Height),
+							Confirmations: bestheight - int(utxo.Height) + 1,
+							ScriptPubKey:  tx.Vout[utxo.Vout].Hex,
+						})
+					}
 				}
 				checksum.Sub(&checksum, &utxo.ValueSat)
 			}

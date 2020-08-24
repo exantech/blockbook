@@ -40,8 +40,9 @@ RUN go get github.com/gobuffalo/packr/...
 RUN \
     cleanup() { rm -rf $GOPATH/src/blockbook; } && \
     trap cleanup EXIT && \
+    cp -r /src $GOPATH/src/blockbook && \
     cd $GOPATH/src && \
-    git clone https://github.com/trezor/blockbook.git && \
+#    git clone https://github.com/trezor/blockbook.git && \
     cd blockbook && \
     dep ensure -vendor-only && \
     cp -r vendor /build/vendor
