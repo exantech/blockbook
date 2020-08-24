@@ -6,16 +6,19 @@ import (
 	"blockbook/bchain/coins/utils"
 	"bytes"
 	"encoding/json"
+	"io"
+
 	"github.com/martinboehm/btcd/wire"
 	"github.com/martinboehm/btcutil/chaincfg"
-	"io"
 )
 
+// magic numbers
 const (
 	MainnetMagic wire.BitcoinNet = 0xf1cfa6d3
 	TestnetMagic wire.BitcoinNet = 0x0d221506
 )
 
+// chain parameters
 var (
 	MainNetParams chaincfg.Params
 	TestNetParams chaincfg.Params
@@ -71,6 +74,9 @@ func GetChainParams(chain string) *chaincfg.Params {
 func parseBlockHeader(r io.Reader) (*wire.BlockHeader, error) {
 	h := &wire.BlockHeader{}
 	err := h.Deserialize(r)
+	if err != nil {
+		return nil, err
+	}
 
 	// hash_state_root 32
 	// hash_utxo_root 32
