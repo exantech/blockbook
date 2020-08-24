@@ -196,7 +196,7 @@ func (b *EthereumRPC) InitializeMempool(addrDescForOutpoint bchain.AddrDescForOu
 	}
 
 	b.Mempool.OnNewTxAddr = onNewTxAddr
-	b.Mempool.OnNewTx = оnNewTx
+    b.Mempool.OnNewTx = оnNewTx
 
 	if err = b.subscribeEvents(); err != nil {
 		return err
