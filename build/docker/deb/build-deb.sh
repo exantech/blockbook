@@ -30,7 +30,7 @@ if ([ $package = "blockbook" ] || [ $package = "all" ]) && [ -d build/pkg-defs/b
     cp Makefile ldb sst_dump build/pkg-defs/blockbook
     cp -r /src/static build/pkg-defs/blockbook
     mkdir build/pkg-defs/blockbook/cert && cp /src/server/testcert.* build/pkg-defs/blockbook/cert
-    (cd build/pkg-defs/blockbook && dpkg-buildpackage -b -us -uc $@)
+    (cd build/pkg-defs/blockbook && DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -b -us -uc $@)
 fi
 
 # copy packages

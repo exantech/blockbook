@@ -1,6 +1,6 @@
 # initialize from the image
 
-FROM ubuntu:16.04
+FROM debian:9
 
 RUN apt-get update && \
     apt-get upgrade -y && \
@@ -40,9 +40,8 @@ RUN go get github.com/gobuffalo/packr/...
 RUN \
     cleanup() { rm -rf $GOPATH/src/blockbook; } && \
     trap cleanup EXIT && \
-    cp -r /src $GOPATH/src/blockbook && \
     cd $GOPATH/src && \
-#    git clone https://github.com/trezor/blockbook.git && \
+    git clone https://github.com/exantech/blockbook.git && \
     cd blockbook && \
     dep ensure -vendor-only && \
     cp -r vendor /build/vendor
